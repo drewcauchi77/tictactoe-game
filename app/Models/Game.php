@@ -11,6 +11,11 @@ class Game extends Model
     /** @use HasFactory<\Database\Factories\GameFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'player_one_id',
+        'player_two_id',
+    ];
+
     public function playerOne(): BelongsTo
     {
         return $this->belongsTo(User::class, 'player_one_id');

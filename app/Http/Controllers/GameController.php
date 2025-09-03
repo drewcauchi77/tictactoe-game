@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
+use Inertia\Inertia;
 
 class GameController extends Controller
 {
@@ -29,7 +30,9 @@ class GameController extends Controller
      */
     public function store(StoreGameRequest $request)
     {
-        //
+        $game = Game::create(['player_one_id' => $request->user()->id]);
+
+        return to_route('games.show', $game);
     }
 
     /**
@@ -37,7 +40,7 @@ class GameController extends Controller
      */
     public function show(Game $game)
     {
-        //
+        return Inertia::render('games/Show', []);
     }
 
     /**
