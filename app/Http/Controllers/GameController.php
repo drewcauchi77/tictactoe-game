@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class GameController extends Controller
@@ -12,9 +15,15 @@ class GameController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        return Inertia::render('Dashboard', [
+            'games' => Game::with('playerOne')
+                ->whereNull('player_two_id')
+                ->where('player_one_id', '!=', $request->user()->id)
+                ->oldest()
+                ->paginate(100),
+        ]);
     }
 
     /**
@@ -35,12 +44,23 @@ class GameController extends Controller
         return to_route('games.show', $game);
     }
 
+    public function join(Request $request, Game $game)
+    {
+        Gate::authorize('join', $game);
+
+        $game->update(['player_two_id' => $request->user()->id]);
+
+        return to_route('games.show', $game);
+    }
+
     /**
      * Display the specified resource.
      */
     public function show(Game $game)
     {
-        return Inertia::render('games/Show', []);
+        return Inertia::render('games/Show', [
+            'game' => $game
+        ]);
     }
 
     /**

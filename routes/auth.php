@@ -59,5 +59,6 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 
-    Route::resource('games', GameController::class)->only(['store', 'show']);
+    Route::resource('games', GameController::class)->only(['index', 'store', 'show']);
+    Route::post('/games/{game}/join', [GameController::class, 'join'])->name('games.join');
 });
