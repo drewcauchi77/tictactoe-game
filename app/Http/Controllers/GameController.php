@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\GameJoined;
 use App\Models\Game;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
@@ -49,6 +50,8 @@ class GameController extends Controller
         Gate::authorize('join', $game);
 
         $game->update(['player_two_id' => $request->user()->id]);
+
+        GameJoined::dispatch($game);
 
         return to_route('games.show', $game);
     }
